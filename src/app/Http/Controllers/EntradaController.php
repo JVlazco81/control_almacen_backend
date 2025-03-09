@@ -7,11 +7,12 @@ use App\Models\Entrada;
 use App\Models\DetalleEntrada;
 use App\Models\Producto;
 use App\Models\Unidad;
+use App\Models\Categoria;
 use Illuminate\Support\Facades\DB;
 
 class EntradaController extends Controller
 {
-    public function store(Request $request)
+    public function procesarEntrada(Request $request)
     {
         DB::beginTransaction();
         try {
@@ -42,14 +43,22 @@ class EntradaController extends Controller
                     'tipo_unidad' => $prod['unidad']
                 ]);
 
+                // Buscar o crear la categoría
+                $categoria = Categoria::firstOrCreate([
+                    'codigo' => $prod['claveProducto']
+                ], [
+                    'descripcion_categoria' => $prod['descripcion_categoria'] ?? 'Sin categoría'
+                ]);
+
                 // Buscar o crear el producto
                 $producto = Producto::firstOrCreate([
+                    'codigo' => $prod['claveProducto'],
                     'descripcion_producto' => $prod['descripcion'],
                     'marca' => $prod['marcaAutor']
                 ], [
-                    'codigo' => rand(1000, 9999), // Código aleatorio temporal
+                    'id_categoria' => $categoria->codigo,
                     'id_unidad' => $unidad->id_unidad,
-                    'cantidad' => 0, // Se actualizará después
+                    'cantidad' => 0,
                     'precio' => $prod['costo'],
                 ]);
 

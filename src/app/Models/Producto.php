@@ -13,7 +13,7 @@ class Producto extends Model
     protected $primaryKey = 'id_producto';
     public $timestamps = false;
 
-    protected $fillable = ['codigo', 'descripcion_producto', 'marca', 'cantidad', 'id_unidad', 'precio'];
+    protected $fillable = ['codigo', 'descripcion_producto', 'marca', 'cantidad', 'id_unidad', 'id_categoria', 'precio'];
 
     // Relación con unidades (un producto tiene una unidad de medida)
     public function unidad()
@@ -25,5 +25,11 @@ class Producto extends Model
     public function detalles()
     {
         return $this->hasMany(DetalleEntrada::class, 'id_producto');
+    }
+
+    // Relación con categorias (un producto pertenece a una categoría)
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class, 'id_categoria', 'codigo');
     }
 }

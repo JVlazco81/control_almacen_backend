@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Sanctum\HasApiTokens;
+
 
 class Usuario extends Authenticatable
 {
+    use HasFactory, HasApiTokens;
     // Definir la tabla y la llave primaria personalizada
     protected $table = 'usuarios';
     protected $primaryKey = 'id_usuario';

@@ -11,9 +11,9 @@ class CreateProductosTable extends Migration
     Schema::create('productos', function (Blueprint $table) {
         // Campo auto-incremental y llave primaria
         $table->increments('id_producto');
-        $table->integer('codigo'); // Código del producto
-        $table->unsignedInteger('id_categoria'); // Debe ser UNSIGNED para coincidir con categorias.codigo
-        $table->string('descripcion_producto', 100);
+        $table->unsignedInteger('codigo'); // Código del producto
+        //$table->unsignedInteger('id_categoria'); // Debe ser UNSIGNED para coincidir con categorias.codigo
+        $table->string('descripcion_producto', 150);
         $table->string('marca', 100)->nullable();
         $table->integer('cantidad')->default(0);
         $table->unsignedInteger('id_unidad');
@@ -21,7 +21,7 @@ class CreateProductosTable extends Migration
 
         // Definir las llaves foráneas
         $table->foreign('id_unidad')->references('id_unidad')->on('unidades');
-        $table->foreign('id_categoria')->references('codigo')->on('categorias'); // Relación con categorías
+        $table->foreign('codigo')->references('codigo')->on('categorias'); // Relación con categorías
     });
 }
 

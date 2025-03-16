@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('categorias', function (Blueprint $table) {
             $table->unsignedInteger('codigo')->primary(); // Asegurar que es UNSIGNED
-            $table->string('descripcion_categoria', 100);
+            $table->string('descripcion_categoria', 150);
         });
     }
     

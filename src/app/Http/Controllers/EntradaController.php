@@ -38,25 +38,28 @@ class EntradaController extends Controller
 
             // Agregar productos a la entrada y actualizar inventario
             foreach ($request->productos as $prod) {
-                // Buscar o crear la unidad
-                $unidad = Unidad::firstOrCreate([
-                    'tipo_unidad' => $prod['unidad']
-                ]);
+                
+                // Consultar la unidad; si no existe, se lanza error
+                $unidad = Unidad::where('tipo_unidad', $prod['unidad'])->first();
+                if (!$unidad) {
+                    DB::rollBack();
+                    throw new \Exception("La unidad '{$prod['unidad']}' no existe.");
+                }
 
-                // Buscar o crear la categoría
-                $categoria = Categoria::firstOrCreate([
-                    'codigo' => $prod['claveProducto']
-                ], [
-                    'descripcion_categoria' => $prod['descripcion_categoria'] ?? 'Sin categoría'
-                ]);
+                // Buscar la categoría por claveProducto
+                $categoria = Categoria::where('codigo', $prod['claveProducto'])->first();
 
-                // Buscar o crear el producto
+                if (!$categoria) {
+                    DB::rollBack();
+                    throw new \Exception("La categoría con claveProducto {$prod['claveProducto']} no existe.");
+                }
+
+                // Buscar o crear el producto, usando el campo 'codigo' que relaciona con la categoría
                 $producto = Producto::firstOrCreate([
                     'codigo' => $prod['claveProducto'],
                     'descripcion_producto' => $prod['descripcion'],
                     'marca' => $prod['marcaAutor']
                 ], [
-                    'id_categoria' => $categoria->codigo,
                     'id_unidad' => $unidad->id_unidad,
                     'cantidad' => 0,
                     'precio' => $prod['costo'],

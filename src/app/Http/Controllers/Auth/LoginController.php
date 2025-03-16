@@ -6,52 +6,36 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class LoginController extends Controller
 {
     public function login(Request $request)
     {
-        // Validar que se envíen 'primer_nombre', 'primer_apellido' y 'password'
-        $request->validate([
-            'primer_nombre'  => 'required',
-            'primer_apellido'=> 'required',
-            'password'       => 'required',
-        ]);
+        $user = Usuario::where('primer_nombre', $request->primer_nombre)
+               ->where('primer_apellido', $request->primer_apellido)
+               ->first();
 
-        $primer_nombre = $request->input('primer_nombre');
-        $primer_apellido = $request->input('primer_apellido');
-        $password = $request->input('password');
-
-        // Buscar el usuario utilizando el primer nombre y primer apellido
-        $user = Usuario::where('primer_nombre', $primer_nombre)
-                        ->where('primer_apellido', $primer_apellido)
-                        ->first();
-
-        if (!$user) {
-            return response()->json(['error' => 'Credenciales inválidas'], 401);
+        if (!$user || $user->usuario_password !== $request->usuario_password) {
+            return response()->json(['message' => 'Credenciales incorrectas'], 401);
         }
 
-        // Validar la contraseña (se asume que está hasheada)
-        if ($password !== $user->usuario_password) {
-            return response()->json(['error' => 'Credenciales invalidas'], 401);
-        }
-
-        // Generar un token simulado (proximamente le agregare el token con Sanctum)
-        $token = base64_encode(Str::random(40));
-
+        $token = $user->createToken('auth_token')->plainTextToken;
+        
         return response()->json([
-            'message' => 'Autenticacion exitosa',
-            'token'   => $token,
-        ], 200);
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $user
+        ])->header('Content-Type', 'application/json; charset=UTF-8');
+
     }
 
     public function logout(Request $request)
     {
-        // En un entorno real, aquí se invalidaría el token o se cerraría la sesión.
-        return response()->json([
-            'message' => 'Logout exitoso'
-        ], 200);
+        $request->user()->currentAccessToken()->delete();
+
+        return [
+            'message' => 'Sesión cerrada'
+        ];
     }
 }
 

@@ -7,6 +7,8 @@ use App\Models\Producto;
 use App\Models\HistorialCambio;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 
 
 class InventarioController extends Controller
@@ -165,4 +167,47 @@ class InventarioController extends Controller
             return response()->json(['error' => 'Error al eliminar el producto: ' . $e->getMessage()], 500);
         }
     }
+
+    /**
+     * Genera un reporte PDF del inventario.
+     *
+     * El reporte incluye:
+     * - Lista completa de productos con Clave, Descripción, Marca, Unidad, Existencias,
+     *   Costo por unidad, Sub-total, IVA y Monto Total.
+     * - Fecha y hora de generación.
+     * - Nombre del usuario que generó el reporte.
+     * - Espacio para firma.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function generarReporteInventario(Request $request)
+    {
+        // Obtener el inventario completo con la relación de unidad
+        $inventario = Producto::with('unidad')->get();
+
+        // Obtener la fecha y hora actual, formateada según se requiera
+        $fecha = Carbon::now()->format('d/m/Y H:i:s');
+
+        // Obtener el usuario autenticado
+        $user = Auth::user();
+
+        // Renderizar la vista del reporte a HTML (se debe crear la vista "reporte_inventario.blade.php")
+        $html = view('reporte_inventario', compact('inventario', 'fecha', 'user'))->render();
+
+        try {
+            // Generar el PDF a partir del HTML
+            $pdf = Pdf::loadHTML($html);
+
+            // Retornar el PDF en streaming
+            return $pdf->stream("reporte_inventario_" . Carbon::now()->format('Ymd_His') . ".pdf");
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al generar PDF',
+                'details' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
 }

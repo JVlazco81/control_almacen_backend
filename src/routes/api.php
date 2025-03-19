@@ -22,5 +22,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/inventario', [InventarioController::class, 'obtenerInventario']);
     Route::patch('/inventario/{id}', [InventarioController::class, 'actualizarProducto']);
     Route::delete('/inventario/{id}', [InventarioController::class, 'eliminarProducto']);
+    Route::get('/inventario/reporte', [InventarioController::class, 'generarReporteInventario']);
 });
 

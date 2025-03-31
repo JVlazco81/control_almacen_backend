@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vale de Salida de Almacén</title>
+    <style>
+        /* -----------------------
+           ESTILOS BÁSICOS
+        ------------------------ */
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            margin-left: -20px; /* Mueve el contenedor 20px hacia la izquierda */
+
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header img {
+            width: 100%;
+        }
+        .titulo {
+            text-align: center;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        /* -----------------------
+           TABLA DE INFORMACIÓN
+        ------------------------ */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            /* Permite al navegador calcular automáticamente 
+            el ancho de cada columna */
+            table-layout: auto; 
+        }
+
+        .info-table td {
+            vertical-align: middle;
+            padding: 5px;
+        }
+
+        /* Primera columna: 
+        - Sin ancho fijo grande
+        - Alineado a la derecha
+        - "width: 1px" + "white-space: nowrap" hace que 
+            se ajuste al contenido */
+        .info-table td:first-child {
+            width: 1px;            /* Ocupa solo lo necesario */
+            white-space: nowrap;   /* Evita quiebres de línea */
+            text-align: right;
+            padding-left: 0;       /* Sin espacio extra a la izquierda */
+        }
+
+        /* Segunda columna: se expandirá automáticamente 
+        para ocupar el resto del espacio */
+        .info-table td:last-child {
+            text-align: left;      /* Alineado a la izquierda */
+            white-space: nowrap;   /* Ajusta según prefieras */
+        }
+
+        /* -----------------------
+           TABLA DE ARTÍCULOS
+        ------------------------ */
+        /* TABLA DE ARTÍCULOS: Solo líneas verticales y borde exterior */
+        .articulos-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        /* Encabezado (thead) con borde completo */
+        .articulos-table thead tr th {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        /* Asignamos anchos a cada columna (opcional) */
+        .articulos-table thead tr th:nth-child(1) { width: 25%; } /* FOLIO */
+        .articulos-table thead tr th:nth-child(2) { width: 50%; } /* ARTÍCULO */
+        .articulos-table thead tr th:nth-child(3) { width: 25%; } /* CANTIDAD */
+
+        /* Cuerpo (tbody): 
+        - Solo borde izquierdo y derecho en cada celda 
+        - Sin líneas horizontales internas */
+        .articulos-table tbody td {
+            border-left: 1px solid black;
+            border-right: 1px solid black;
+            padding: 5px;
+            text-align: left; /* Alinea a la izquierda por defecto */
+            vertical-align: middle;
+        }
+
+        /* CANTIDAD (tercera columna) centrada */
+        .articulos-table tbody td:nth-child(3) {
+            text-align: center;
+        }
+
+        /* Primera fila del tbody: borde superior */
+        .articulos-table tbody tr:first-child td {
+            border-top: 1px solid black;
+        }
+
+        /* Última fila del tbody: borde inferior */
+        .articulos-table tbody tr:last-child td {
+            border-bottom: 1px solid black;
+        }
+
+        /* -----------------------
+           TABLA DE RESUMEN (O.C. 193, etc.)
+        ------------------------ */
+        .resumen-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            table-layout: auto; /* Permite al navegador ajustar anchos según contenido */
+        }
+
+        .resumen-table td {
+            padding: 5px;
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap; /* Evita que el texto salte de línea */
+        }
+
+        /* Elimina negritas de la tercera celda (donde dice "TOTAL DE ARTÍCULOS") */
+        .resumen-table td:nth-child(3) {
+            font-weight: normal;
+        }
+
+
+        /* -----------------------
+        TABLA DE FIRMAS
+        ------------------------ */
+        .firmas-table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: collapse;
+        }
+        .firmas-table td {
+            border: 1px solid black;
+            text-align: center;
+        }
+        /* Ancho para la primera y última columna (ej. 45% cada una) */
+        .firmas-table td:first-child,
+        .firmas-table td:last-child {
+            width: 45%;
+        }
+        /* Quita líneas horizontales internas, manteniendo el borde exterior */
+        .firmas-table tr:nth-child(1) td {
+            border-bottom: none !important;
+        }
+        .firmas-table tr:nth-child(2) td {
+            border-top: none !important;
+            border-bottom: none !important;
+        }
+        .firmas-table tr:nth-child(3) td {
+            border-top: none !important;
+        }
+        /* Clases para remover bordes superior/inferior si se requiere */
+        .force-erase-top {
+            border-top: none !important;
+        }
+        .force-erase-bottom {
+            border-bottom: none !important;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+        <img src="{{ public_path('header.jpg') }}" alt="Encabezado">
+    </div>
+    <h3 class="titulo">VALE DE SALIDA DE ALMACÉN</h3>
+
+    <table class="info-table">
+        <tr>
+            <td><strong>No.</strong></td>
+            <td>{{ $salida->salida_anual }}</td>
+        </tr>
+        <tr>
+            <td><strong>FECHA:</strong></td>
+            <td>{{ \Carbon\Carbon::parse($salida->fecha_salida)->format('d/m/Y') }}</td>
+        </tr>
+        <tr>
+            <td><strong>DEPARTAMENTO:</strong></td>
+            <td>{{ $salida->departamento->nombre_departamento }}</td>
+        </tr>
+    </table>
+
+    <table class="articulos-table">
+        <thead>
+            <tr>
+                <th>FOLIO</th>
+                <th>ARTÍCULO</th>
+                <th>CANTIDAD</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($salida->detalles as $detalle)
+                <tr>
+                    <td>{{ $salida->folio }}</td>
+                    <td>{{ $detalle->producto->descripcion_producto }}</td>
+                    <td>{{ $detalle->cantidad }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <table class="resumen-table">
+        <tr>
+            <td>O.C. {{ $salida->orden_compra }}</td>
+            <td>DIRM-P01-F03 Ver2.0</td>
+            <td>TOTAL DE ARTÍCULOS</td>
+            <td>{{ $salida->detalles->sum('cantidad') }}</td>
+        </tr>
+    </table>
+
+    <table class="firmas-table">
+        <tr>
+            <td><strong>ENTREGA</strong></td>
+            <td class="force-erase-top"></td>
+            <td><strong>RECIBE</strong></td>
+        </tr>
+        <tr>
+            <td><br><br><br><br><br></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><strong>C.P. CLAUDIO ALFONSO VELA MAGAÑA</strong></td>
+            <td class="force-erase-bottom"></td>
+            <td><strong>{{ $salida->departamento->nombre_encargado }}</strong></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

@@ -33,4 +33,13 @@ class Producto extends Model
         //return $this->belongsTo(Categoria::class, 'id_categoria', 'codigo');
         return $this->belongsTo(Categoria::class, 'codigo');
     }
+    public function entradas()
+    {
+        return $this->hasMany(DetalleEntrada::class, 'id_producto');
+    }
+    
+    public function detalleSalidas()
+    {
+        return $this->hasMany(DetalleSalida::class, 'id_producto');
+    }    
 }

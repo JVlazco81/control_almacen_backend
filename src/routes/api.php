@@ -10,25 +10,22 @@ use App\Http\Controllers\ValeEntradaController;
 use App\Http\Controllers\SalidaController;
 use App\Http\Controllers\ValeSalidaController;
 
-Route::post('login', [LoginController::class, 'login']);
+Route::post('/login', [LoginController::class, 'login']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-Route::post('logout', [LoginController::class, 'logout']);
+    Route::post('/logout', [LoginController::class, 'logout']);
 
-Route::post('/entradas', [EntradaController::class, 'procesarEntrada']);
+    Route::post('/entradas', [EntradaController::class, 'procesarEntrada']);
+    
+    Route::get('/historial-entradas', [HistorialEntradaController::class, 'obtenerHistorial']);
+    Route::get('/vale-entrada/{id_entrada}', [ValeEntradaController::class, 'generarVale']);
 
-Route::get('/inventario', [InventarioController::class, 'obtenerInventario']);
+    Route::post('/salidas/generar', [SalidaController::class, 'generarVale']);
+    Route::get('/vale-salida/{id_salida}', [ValeSalidaController::class, 'generarVale']);
 
-Route::get('/historial-entradas', [HistorialEntradaController::class, 'obtenerHistorial']);
-
-Route::post('/salidas/generar', [SalidaController::class, 'generarVale']);
-
-Route::get('/vale-entrada/{id_entrada}', [ValeEntradaController::class, 'generarVale']);
-
-Route::get('/vale-salida/{id_salida}', [ValeSalidaController::class, 'generarVale']);
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+    Route::get('/inventario', [InventarioController::class, 'obtenerInventario']);
+    Route::patch('/inventario/{id}', [InventarioController::class, 'actualizarProducto']);
+    Route::delete('/inventario/{id}', [InventarioController::class, 'eliminarProducto']);
+    Route::get('/inventario/reporte', [InventarioController::class, 'generarReporteInventario']);
 });

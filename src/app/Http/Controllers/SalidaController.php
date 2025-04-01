@@ -15,8 +15,7 @@ class SalidaController extends Controller
         $data = $request->validate([
             'departamento' => 'required|string',
             'encargado' => 'required|string',
-            'ordenCompra' => 'required|date',
-            'productos' => 'required|array|min:1',
+            'ordenCompra' => 'required|integer|min:1', // smallint range            'productos' => 'required|array|min:1',
             'productos.*.folio' => 'required|string|max:15',
             'productos.*.descripcion' => 'required|string',
             'productos.*.cantidad' => 'required|integer|min:1',
@@ -57,7 +56,7 @@ class SalidaController extends Controller
                 'folio' => $data['productos'][0]['folio'],
                 'salida_anual' => $salidaAnual,
                 'fecha_salida' => now()->toDateString(),
-                'orden_compra' => intval(date('md', strtotime($data['ordenCompra'])))
+                'orden_compra' => $data['ordenCompra']
             ]);
 
             foreach ($data['productos'] as $producto) {

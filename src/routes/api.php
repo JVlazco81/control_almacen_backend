@@ -22,16 +22,13 @@ Route::get('/inventario', [InventarioController::class, 'obtenerInventario']);
 
 Route::get('/historial-entradas', [HistorialEntradaController::class, 'obtenerHistorial']);
 
-
 Route::post('/salidas/generar', [SalidaController::class, 'generarVale']);
 
+Route::get('/vale-entrada/{id_entrada}', [ValeEntradaController::class, 'generarVale']);
 
+Route::get('/vale-salida/{id_salida}', [ValeSalidaController::class, 'generarVale']);
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 });
-Route::get('/vale-entrada/{id_entrada}', [ValeEntradaController::class, 'generarVale']);
-
-Route::get('/vale-salida/{id_salida}', [ValeSalidaController::class, 'generarVale']);
-

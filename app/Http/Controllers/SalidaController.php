@@ -41,7 +41,7 @@ class SalidaController extends Controller
                     return response()->json(['error' => 'Producto no encontrado: ' . $producto['descripcion']], 404);
                 }
 
-                $stock = $p->entradas()->sum('cantidad') - $p->detalleSalidas()->sum('cantidad');
+                $stock = $p->cantidad;
 
                 if ($stock < $producto['cantidad']) {
                     return response()->json([
@@ -76,7 +76,11 @@ class SalidaController extends Controller
 
             DB::commit();
 
-            return response()->json(['message' => 'Vale de salida generado correctamente', 'folio' => $salida->folio], 201);
+            return response()->json([
+                'message' => 'Vale de salida generado correctamente',
+                'id_salida' => $salida->id_salida,
+                'folio' => $salida->folio
+            ], 201);
 
         } catch (\Exception $e) {
             DB::rollBack();

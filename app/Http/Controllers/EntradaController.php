@@ -90,6 +90,7 @@ class EntradaController extends Controller
             DB::commit();
             
             return response()->json([
+                'id_entrada' => $entrada->id_entrada,
                 'proveedor' => $proveedor->nombre_proveedor,
                 'fechaFactura' => $entrada->fecha_factura,
                 'folio' => $entrada->folio,

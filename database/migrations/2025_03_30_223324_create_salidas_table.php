@@ -11,7 +11,7 @@ class CreateSalidasTable extends Migration
         Schema::create('salidas', function (Blueprint $table) {
             $table->id('id_salida');
             $table->unsignedBigInteger('id_departamento');
-            $table->string('folio', 15)->unique();
+            $table->string('folio', 15);
             $table->smallInteger('salida_anual');
             $table->date('fecha_salida');
             $table->smallInteger('orden_compra');

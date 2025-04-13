@@ -18,8 +18,10 @@ class CreateSalidasTable extends Migration
             $table->timestamps();
         
             $table->foreign('id_departamento')->references('id_departamento')->on('departamentos')->onDelete('cascade');
+
+            $table->softDeletes();
         });
-        
+
     }
 
     public function down()

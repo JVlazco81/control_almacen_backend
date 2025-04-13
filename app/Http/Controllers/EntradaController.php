@@ -9,6 +9,7 @@ use App\Models\Producto;
 use App\Models\Unidad;
 use App\Models\Categoria;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class EntradaController extends Controller
 {
@@ -99,6 +100,31 @@ class EntradaController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => 'Error al registrar la entrada.', 'details' => $e->getMessage()], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            
+            $entrada = Entrada::findOrFail($id);
+
+            foreach ($entrada->detalles as $detalle) {
+                $detalle->delete();
+            }
+
+            $entrada->delete();
+
+            return response()->json(['message' => 'Entrada eliminada correctamente'], 200);
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Entrada no encontrada'], 404);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al eliminar la entrada.',
+                'details' => $e->getMessage()
+            ], 500);
         }
     }
 }

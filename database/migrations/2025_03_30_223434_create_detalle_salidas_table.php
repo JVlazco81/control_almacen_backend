@@ -27,7 +27,7 @@ class CreateDetalleSalidasTable extends Migration
                   ->references('id_producto')->on('productos')
                   ->onDelete('cascade');
 
-            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

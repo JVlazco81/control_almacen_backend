@@ -7,6 +7,7 @@ use App\Models\Salida;
 use App\Models\DetalleSalida;
 use App\Models\Departamento;
 use App\Models\Producto;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class SalidaController extends Controller
 {
@@ -84,6 +85,26 @@ class SalidaController extends Controller
                 'error' => 'Error al generar vale de salida',
                 'details' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function destroy($id){
+
+        try{
+            $salida = Salida::findOrFail($id);
+
+            foreach($salida->detalles as $detalle){
+                $detalle->delete();
+            }
+            
+            $salida->delete();
+            
+            return response()->json(['message' => 'Salida eliminada correctamente'], 200);
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Salida no encontrada'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al eliminar la salida', 'details' => $e->getMessage()], 500);
         }
     }
 }

@@ -26,6 +26,8 @@ class CreateEntradasTable extends Migration
             $table->foreign('id_proveedor')
                   ->references('id_proveedor')
                   ->on('proveedores');
+
+            $table->softDeletes();      
         });
     }
 

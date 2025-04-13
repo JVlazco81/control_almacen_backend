@@ -18,12 +18,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [LoginController::class, 'logout']);
 
     Route::post('/entradas', [EntradaController::class, 'procesarEntrada']);
-    
+
     Route::get('/historial-entradas', [HistorialEntradaController::class, 'obtenerHistorial']);
     Route::get('/vale-entrada/{id_entrada}', [ValeEntradaController::class, 'generarVale']);
+    Route::delete('/entradas/{id}', [EntradaController::class, 'destroy']);
 
     Route::post('/salidas/generar', [SalidaController::class, 'generarVale']);
     Route::get('/vale-salida/{id_salida}', [ValeSalidaController::class, 'generarVale']);
+    Route::delete('salidas/{id}', [SalidaController::class, 'destroy']);
 
     Route::get('/inventario', [InventarioController::class, 'obtenerInventario']);
     Route::patch('/inventario/{id}', [InventarioController::class, 'actualizarProducto']);

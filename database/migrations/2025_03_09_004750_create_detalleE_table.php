@@ -27,6 +27,8 @@ class CreateDetalleETable extends Migration
             $table->foreign('id_producto')
                   ->references('id_producto')
                   ->on('productos');
+            
+            $table->softDeletes();
         });
     }
 

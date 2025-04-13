@@ -4,16 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DetalleEntrada extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'detalleE';
-    protected $primaryKey = 'id_detalle_entrada';
+    protected $primaryKey = 'id_detalleE';
     public $timestamps = false;
 
     protected $fillable = ['id_entrada', 'id_producto', 'cantidad'];
+
+    protected $dates = ['deleted_at'];
 
     // Relación con entrada (cada detalle pertenece a una entrada)
     public function entrada()

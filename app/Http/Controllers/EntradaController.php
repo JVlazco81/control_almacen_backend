@@ -10,6 +10,8 @@ use App\Models\Unidad;
 use App\Models\Categoria;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Models\HistorialCambio;
+use Illuminate\Support\Facades\Auth;
 
 class EntradaController extends Controller
 {
@@ -106,6 +108,7 @@ class EntradaController extends Controller
 
     public function destroy($id)
     {
+        DB::beginTransaction();
         try {
             
             $entrada = Entrada::findOrFail($id);
@@ -116,12 +119,24 @@ class EntradaController extends Controller
 
             $entrada->delete();
 
+            HistorialCambio::create([
+                'tipo_auditado'  => 'Entrada',
+                'id_auditado'    => $entrada->id_entrada,
+                'id_usuario'    => Auth::id(),
+                'accion'         => 'eliminacion',
+                'valor_anterior' => null,
+                'valor_nuevo'    => null,
+                'fecha'          => now(),
+            ]);
+
+            DB::commit();
             return response()->json(['message' => 'Entrada eliminada correctamente'], 200);
 
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Entrada no encontrada'], 404);
 
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'error' => 'Error al eliminar la entrada.',
                 'details' => $e->getMessage()

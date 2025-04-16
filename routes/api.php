@@ -10,6 +10,7 @@ use App\Http\Controllers\ValeEntradaController;
 use App\Http\Controllers\SalidaController;
 use App\Http\Controllers\ValeSalidaController;
 use App\Http\Controllers\Auth\UsuarioController;
+use App\Http\Controllers\HistorialCambioController;
 
 Route::post('/login', [LoginController::class, 'login']);
 
@@ -25,12 +26,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::post('/salidas/generar', [SalidaController::class, 'generarVale']);
     Route::get('/vale-salida/{id_salida}', [ValeSalidaController::class, 'generarVale']);
+    Route::get('/salidas', [SalidaController::class, 'index']);
     Route::delete('salidas/{id}', [SalidaController::class, 'destroy']);
 
     Route::get('/inventario', [InventarioController::class, 'obtenerInventario']);
     Route::patch('/inventario/{id}', [InventarioController::class, 'actualizarProducto']);
     Route::delete('/inventario/{id}', [InventarioController::class, 'eliminarProducto']);
     Route::get('/inventario/reporte', [InventarioController::class, 'generarReporteInventario']);
+
+    Route::get('/historial-cambios', [HistorialCambioController::class, 'index']);
 });
 
 Route::middleware(['auth:sanctum', 'role:director'])->group(function () {

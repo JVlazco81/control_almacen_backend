@@ -8,6 +8,8 @@ use App\Models\DetalleSalida;
 use App\Models\Departamento;
 use App\Models\Producto;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Models\HistorialCambio;
+use Illuminate\Support\Facades\Auth;
 
 class SalidaController extends Controller
 {
@@ -92,7 +94,30 @@ class SalidaController extends Controller
         }
     }
 
+    public function index(){
+        
+        $salidas = Salida::with('departamento')
+            ->orderBy('fecha_salida', 'desc')
+            ->get();
+
+        // Transformar la información para estructurar la respuesta
+        $salidasTransformadas = $salidas->map(function ($salida) {
+            return [
+                'id_salida' => $salida->id_salida,
+                'departamento' => $salida->departamento->nombre_departamento,
+                'folio' => $salida->folio,
+                'salida_anual' => $salida->salida_anual,
+                'fecha_salida' => $salida->fecha_salida,
+                'orden_compra' => $salida->orden_compra,
+            ];
+        });
+
+        return response()->json($salidasTransformadas);
+    }
+
     public function destroy($id){
+
+        DB::beginTransaction();
 
         try{
             $salida = Salida::findOrFail($id);
@@ -102,12 +127,25 @@ class SalidaController extends Controller
             }
             
             $salida->delete();
+
+            HistorialCambio::create([
+                'tipo_auditado'  => 'Salida',
+                'id_auditado'    => $salida->id_salida,
+                'id_usuario'    => Auth::id(),
+                'accion'         => 'eliminacion',
+                'valor_anterior' => null,
+                'valor_nuevo'    => null,
+                'fecha'          => now(),
+            ]);
+
+            DB::commit();
             
             return response()->json(['message' => 'Salida eliminada correctamente'], 200);
 
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Salida no encontrada'], 404);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json(['error' => 'Error al eliminar la salida', 'details' => $e->getMessage()], 500);
         }
     }

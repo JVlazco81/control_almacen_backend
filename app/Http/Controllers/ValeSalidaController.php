@@ -8,9 +8,9 @@ use App\Models\Salida;
 
 class ValeSalidaController extends Controller
 {
-    public function generarVale(Request $request, $id_salida)
+    public function generarVale(Request $request, $id)
     {
-        $salida = Salida::with(['departamento', 'detalles.producto'])->find($id_salida);
+        $salida = Salida::with(['departamento', 'detalles.producto'])->find($id);
 
         if (!$salida) {
             return response()->json(["error" => "Salida no encontrada"], 404);

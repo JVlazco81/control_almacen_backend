@@ -8,10 +8,10 @@ use App\Models\Entrada;
 
 class ValeEntradaController extends Controller
 {
-    public function generarVale(Request $request, $id_entrada)
+    public function generarVale(Request $request, $id)
     {
         // Buscar la entrada con sus detalles y proveedor
-        $entrada = Entrada::with(['proveedor', 'detalles.producto'])->find($id_entrada);
+        $entrada = Entrada::with(['proveedor', 'detalles.producto'])->find($id);
 
         // Si no se encuentra la entrada, devolver un error JSON
         if (!$entrada) {

@@ -96,10 +96,11 @@ class SalidaController extends Controller
 
     public function index(){
         
-        $salidas = Salida::with('departamento')
+        $salidas = Salida::with(['departamento', 'detalles.producto.unidad', 'detalles.producto.categoria'])
             ->orderBy('fecha_salida', 'desc')
             ->get();
 
+        // Transformar la información para estructurar la respuesta
         // Transformar la información para estructurar la respuesta
         $salidasTransformadas = $salidas->map(function ($salida) {
             return [
@@ -109,6 +110,19 @@ class SalidaController extends Controller
                 'salida_anual' => $salida->salida_anual,
                 'fecha_salida' => $salida->fecha_salida,
                 'orden_compra' => $salida->orden_compra,
+                'productos' => $salida->detalles->map(function ($detalle) {
+                    $producto = $detalle->producto;
+                    return [
+                        'id_producto' => $producto->id_producto,
+                        'codigo' => $producto->codigo,
+                        'descripcion' => $producto->descripcion_producto,
+                        'marca' => $producto->marca,
+                        'cantidad' => $detalle->cantidad,
+                        'unidad' => $producto->unidad->tipo_unidad ?? 'N/A',
+                        'categoria' => $producto->categoria->descripcion_categoria ?? 'N/A',
+                        'precio' => $producto->precio,
+                    ];
+                }),
             ];
         });
 

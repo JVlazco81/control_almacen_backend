@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Rol extends Model
 {
+    use HasFactory;
     // nombre de la tabla
     protected $table = 'roles';
 

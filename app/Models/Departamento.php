@@ -13,4 +13,9 @@ class Departamento extends Model
     public $timestamps = true;
 
     protected $fillable = ['nombre_departamento', 'nombre_encargado'];
+
+     public function salidas()
+    {
+        return $this->hasMany(Salida::class, 'id_departamento', 'id_departamento');
+    }
 }

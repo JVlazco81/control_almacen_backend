@@ -9,7 +9,7 @@ class CreateDepartamentosTable extends Migration
     public function up()
     {
         Schema::create('departamentos', function (Blueprint $table) {
-            $table->id('id_departamento'); // ✅ Esto es lo importante
+            $table->id('id_departamento');
             $table->string('nombre_departamento', 55);
             $table->string('nombre_encargado', 55);
             $table->timestamps();

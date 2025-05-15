@@ -12,7 +12,7 @@ class CreateUnidadesTable extends Migration
             // Campo auto-incremental y llave primaria
             $table->increments('id_unidad');
             
-            // Tipo de unidad (ejemplo: PZA, KG, LITRO)
+            // Tipo de unidad (ejemplo: caja, paquete, pieza)
             $table->string('tipo_unidad', 20);
         });
     }

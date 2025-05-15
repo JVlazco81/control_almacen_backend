@@ -4,13 +4,13 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Database\QueryException;
 use App\Models\DetalleSalida;
 use App\Models\Salida;
 use App\Models\Producto;
 use App\Models\Categoria;
 use App\Models\Unidad;
 use App\Models\Departamento;
-use App\Models\Usuario;
 
 class DetalleSalidaTest extends TestCase
 {
@@ -40,5 +40,35 @@ class DetalleSalidaTest extends TestCase
 
         $this->assertEquals($sal->id_salida,   $detalle->salida->id_salida);
         $this->assertEquals($prod->id_producto, $detalle->producto->id_producto);
+    }
+
+    /** @test */
+    public function id_salida_no_puede_ser_null()
+    {
+        $this->expectException(QueryException::class);
+
+        DetalleSalida::factory()->create([
+            'id_salida' => null,
+        ]);
+    }
+
+    /** @test */
+    public function id_producto_no_puede_ser_null()
+    {
+        $this->expectException(QueryException::class);
+
+        DetalleSalida::factory()->create([
+            'id_producto' => null,
+        ]);
+    }
+
+    /** @test */
+    public function cantidad_no_puede_ser_null()
+    {
+        $this->expectException(QueryException::class);
+
+        DetalleSalida::factory()->create([
+            'cantidad' => null,
+        ]);
     }
 }

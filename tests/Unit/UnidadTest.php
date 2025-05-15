@@ -6,6 +6,8 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Unidad;
 use App\Models\Producto;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Str;
 
 class UnidadTest extends TestCase
 {
@@ -27,5 +29,23 @@ class UnidadTest extends TestCase
         $this->assertCount(2, $unidad->productos);
         $this->assertTrue($unidad->productos->contains($productos[0]));
         $this->assertTrue($unidad->productos->contains($productos[1]));
+    }
+
+    /** @test */
+    public function tipo_unidad_no_puede_ser_null()
+    {
+        $this->expectException(QueryException::class);
+        Unidad::factory()->create([
+            'tipo_unidad' => null,
+        ]);
+    }
+
+    /** @test */
+    public function tipo_unidad_no_puede_superar_20_caracteres()
+    {
+        $this->expectException(QueryException::class);
+        Unidad::factory()->create([
+            'tipo_unidad' => Str::repeat('X', 21),
+        ]);
     }
 }

@@ -5,6 +5,8 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Str;
 use App\Models\HistorialCambio;
 use App\Models\Usuario;
 use App\Models\Producto;
@@ -37,5 +39,75 @@ class HistorialCambioTest extends TestCase
 
         // Ahora auditable() resolverá correctamente a App\Models\Producto
         $this->assertInstanceOf(Producto::class, $hist->auditable);
+    }
+
+    /** @test */
+    public function tipo_auditado_no_puede_ser_null()
+    {
+        $this->expectException(QueryException::class);
+
+        HistorialCambio::factory()->create([
+            'tipo_auditado' => null,
+        ]);
+    }
+
+    /** @test */
+    public function tipo_auditado_no_puede_superar_30_caracteres()
+    {
+        $this->expectException(QueryException::class);
+
+        HistorialCambio::factory()->create([
+            'tipo_auditado' => Str::repeat('X', 31),
+        ]);
+    }
+
+    /** @test */
+    public function id_auditado_no_puede_ser_null()
+    {
+        $this->expectException(QueryException::class);
+
+        HistorialCambio::factory()->create([
+            'id_auditado' => null,
+        ]);
+    }
+
+    /** @test */
+    public function id_usuario_no_puede_ser_null()
+    {
+        $this->expectException(QueryException::class);
+
+        HistorialCambio::factory()->create([
+            'id_usuario' => null,
+        ]);
+    }
+
+    /** @test */
+    public function accion_no_puede_ser_null()
+    {
+        $this->expectException(QueryException::class);
+
+        HistorialCambio::factory()->create([
+            'accion' => null,
+        ]);
+    }
+
+    /** @test */
+    public function accion_no_puede_superar_20_caracteres()
+    {
+        $this->expectException(QueryException::class);
+
+        HistorialCambio::factory()->create([
+            'accion' => Str::repeat('A', 21),
+        ]);
+    }
+
+    /** @test */
+    public function fecha_no_puede_ser_null()
+    {
+        $this->expectException(QueryException::class);
+
+        HistorialCambio::factory()->create([
+            'fecha' => null,
+        ]);
     }
 }

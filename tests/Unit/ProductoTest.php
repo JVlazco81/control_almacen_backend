@@ -4,6 +4,8 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Str;
 use App\Models\Producto;
 use App\Models\Categoria;
 use App\Models\Unidad;
@@ -47,5 +49,54 @@ class ProductoTest extends TestCase
         // 3) Aserciones
         $this->assertInstanceOf(Unidad::class, $producto->unidad);
         $this->assertEquals('Caja', $producto->unidad->tipo_unidad);
+    }
+
+    /** @test */
+    public function descripcion_producto_no_puede_ser_null()
+    {
+        $this->expectException(QueryException::class);
+        Producto::factory()->create(['descripcion_producto' => null]);
+    }
+
+    /** @test */
+    public function descripcion_producto_no_puede_superar_150_caracteres()
+    {
+        $this->expectException(QueryException::class);
+        Producto::factory()->create([
+            'descripcion_producto' => Str::repeat('A', 151),
+        ]);
+    }
+
+    /** @test */
+    public function marca_no_puede_superar_100_caracteres()
+    {
+        $this->expectException(QueryException::class);
+        Producto::factory()->create([
+            // primero creamos FK válidos
+            'codigo'    => Categoria::factory()->create()->codigo,
+            'id_unidad' => Unidad::factory()->create()->id_unidad,
+            'marca'     => Str::repeat('B', 101),
+        ]);
+    }
+
+    /** @test */
+    public function codigo_no_puede_ser_null()
+    {
+        $this->expectException(QueryException::class);
+        Producto::factory()->create(['codigo' => null]);
+    }
+
+    /** @test */
+    public function id_unidad_no_puede_ser_null()
+    {
+        $this->expectException(QueryException::class);
+        Producto::factory()->create(['id_unidad' => null]);
+    }
+
+    /** @test */
+    public function precio_no_puede_ser_null()
+    {
+        $this->expectException(QueryException::class);
+        Producto::factory()->create(['precio' => null]);
     }
 }

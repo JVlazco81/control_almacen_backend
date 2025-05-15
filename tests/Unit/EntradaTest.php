@@ -4,6 +4,8 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Str;
 use App\Models\Entrada;
 use App\Models\Proveedor;
 use App\Models\DetalleEntrada;
@@ -37,5 +39,48 @@ class EntradaTest extends TestCase
         $this->assertEquals($prov->id_proveedor, $entrada->proveedor->id_proveedor);
         $this->assertCount(1, $entrada->detalles);
         $this->assertEquals($prod->id_producto, $entrada->detalles->first()->producto->id_producto);
+    }
+
+    public function id_proveedor_no_puede_ser_null()
+    {
+        $this->expectException(QueryException::class);
+        Entrada::factory()->create(['id_proveedor' => null]);
+    }
+
+    /** @test */
+    public function folio_no_puede_ser_null()
+    {
+        $this->expectException(QueryException::class);
+        Entrada::factory()->create(['folio' => null]);
+    }
+
+    /** @test */
+    public function folio_no_puede_superar_15_caracteres()
+    {
+        $this->expectException(QueryException::class);
+        Entrada::factory()->create([
+            'folio' => Str::repeat('X', 16),
+        ]);
+    }
+
+    /** @test */
+    public function entrada_anual_no_puede_ser_null()
+    {
+        $this->expectException(QueryException::class);
+        Entrada::factory()->create(['entrada_anual' => null]);
+    }
+
+    /** @test */
+    public function fecha_factura_no_puede_ser_null()
+    {
+        $this->expectException(QueryException::class);
+        Entrada::factory()->create(['fecha_factura' => null]);
+    }
+
+    /** @test */
+    public function fecha_entrada_no_puede_ser_null()
+    {
+        $this->expectException(QueryException::class);
+        Entrada::factory()->create(['fecha_entrada' => null]);
     }
 }

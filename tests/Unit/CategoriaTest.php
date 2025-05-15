@@ -4,6 +4,8 @@ namespace Tests\Unit\Models;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Str;
 use App\Models\Categoria;
 use App\Models\Producto;
 
@@ -34,5 +36,27 @@ class CategoriaTest extends TestCase
         $this->assertCount(2, $categoria->productos);
         $this->assertTrue($categoria->productos->contains($productos[0]));
         $this->assertTrue($categoria->productos->contains($productos[1]));
+    }
+
+    /** @test */
+    public function descripcion_categoria_no_puede_ser_null()
+    {
+        $this->expectException(QueryException::class);
+
+        // crea una categoría con la columna obligatoria en null
+        Categoria::factory()->create([
+            'descripcion_categoria' => null,
+        ]);
+    }
+
+    /** @test */
+    public function descripcion_categoria_no_puede_superar_150_caracteres()
+    {
+        $this->expectException(QueryException::class);
+
+        // genera un string de 151 chars
+        Categoria::factory()->create([
+            'descripcion_categoria' => Str::repeat('A', 151),
+        ]);
     }
 }
